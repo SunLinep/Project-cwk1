@@ -3,20 +3,19 @@
 #include <stdlib.h>
 #include "book_mangement.h"
 
-Book * bookfirst = (Book*)malloc(sizeof Book);
-bookfirst->next = NULL;
+extern Book * bookfirst = (Book*)malloc(sizeof Book);
 
 int store_books(FILE *file){
-	if(bookfirst->id != 1)
+	if(bookfirst->id != 1);
 }
 
-\\-1说明该文件为空文件
+\\1说明该文件为空文件
 int load_books(FILE *file){
 	int i = 0;
 	char *content;
 	const char s[2] = "\t";
 	if(fgets(content,1000,file) == NULL){
-		return -1;
+		return 1;
 	}else{
 		Book * p = (Book*)malloc(sizeof Book);
 		p = bookfirst;
@@ -47,31 +46,39 @@ int add_book(Book book){
 	p = bookfirst;
 	while(p->next != NULL){
 		i++;
+		if(strcmp(p->title, book->title) == 0 && strcmp(p->authors, book->authors) == 0){
+			return 1;
+		}
 		p = p->next;
 	}
 	p->next = book;
-	book->next = NULL;
 	book->id = ++i;
 	p = book->next;
+	book = book->next;
 	free(p);
+	free(book);
 	return 0;
 }
 
 int remove_book(Book book){
 	Book * p = (Book*)malloc(sizeof Book);
+	Book * l = (Book*)malloc(sizeof Book);
 	p = bookfirst;
-	while(p->next != book){
+	while(&& strcmp(p->next->title, book->title) != 0 && strcmp(p->next->authors, book->authors) != 0){
 		p = p->next;
+		if(p == NULL) return 1;
 	}
-	p->next = book->next
-	book->next = NULL;
-	p = p->next;
+	book = p->next;
+	l = p->next->next;
+	p->next = l;
+	p = p->next
+	free(l);
+	free(book);
 	while(p != NULL){
 		p->id--;
 		p = p->next;
 	}
 	free(p);
-	free(book);
 	return 0;
 }
 
