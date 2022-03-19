@@ -49,20 +49,24 @@ void loaduserlist(char *userfile){
     const char s[2] = "\t";
     if((users = fopen(userfile, "r")) == NULL){
         users = fopen(userfile, "w");
+        setbuf(users,NULL);
         fprintf(users, "%s\t%s", userfirst->username, userfirst->password);
-        fclose(users);
+        fflush(users);
     }else{
         if(fgets(content, 200, users) == NULL){
-            strcpy(userfirst->username, "librarian");
-            strcpy(userfirst->password, "librarian");
-            userfirst->next = NULL;
+            fclose(users);
+            users = fopen(userfile, "w");
+            setbuf(users,NULL);
+            fprintf(users, "%s\t%s", userfirst->username, userfirst->password);
+            fflush(users);
+            fclose(users);
             return;
         }else{
             User * q = (User*)malloc(sizeof q);
             q = userfirst;
             q->next = NULL;
             do{
-                while (content[i] != '\n') i++;
+                while (content[i] != '\n'&& content[i] != '\0') i++;
                 content[i] = '\0';
                 strcpy(q->username, strtok(content, s));
                 strcpy(q->password, strtok(NULL, s));
@@ -129,11 +133,13 @@ void registeruser(char *userfile){
 int mainMenu(){
     int option;
     loaduserlist(userfilename);
-    printf("\nPlease choose an option:\n1) Register an accoun\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:");
-    while(scanf("%d",&option) != 1){
-        if(option >=1 && option <= 5) break;
-        printf("\nSorry, the option you entered was invalid, please try again.\n");
-        printf("\nPlease choose an option:\n1) Register an accoun\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:");
+    printf("Please choose an option:\n1) Register an accoun\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:\n");
+    while(1){
+        if(scanf("%d",&option) == 1){
+            if(option >=1 && option <= 5) break;
+        }
+        printf("Sorry, the option you entered was invalid, please try again.\n");
+        printf("Please choose an option:\n1) Register an accoun\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:\n");
         fflush(stdin);
     }
     switch(option){
