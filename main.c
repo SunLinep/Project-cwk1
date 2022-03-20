@@ -20,7 +20,7 @@ void displayBooks(char *bookfile);
 
 void registeruser(char *userfile);
 
-int mainMenu();
+void mainMenu(void);
 
 void searchbook(char *user);
 
@@ -28,16 +28,16 @@ void login_librarian(void);
 
 void login_user(char *name);
 
-void login(User *user);
+void login(void);
 
 int main(void){
     bookfirst = (Book*)malloc(sizeof bookfirst);
-    bookfirst->next = NULL;
     userfirst = (User*) malloc(sizeof userfirst);
     strcpy(userfirst->username ,"librarian");
     strcpy( userfirst->password ,"librarian");
+    bookfirst->next = NULL;
     userfirst->next = NULL;
-	mainMenu();
+    mainMenu();
 	return 0;
 }
 
@@ -45,37 +45,43 @@ void loaduserlist(char *userfile){
     int i = 0;
     FILE * users;
     char content[200];
+//    char username[100];
+//    char password[100];
+//    strcpy( username,userfirst->username);
+//    strcpy(password ,userfirst->password);
     memset(content, '\0', sizeof(content));
     const char s[2] = "\t";
     if((users = fopen(userfile, "r")) == NULL){
         users = fopen(userfile, "w");
         setbuf(users,NULL);
-        fprintf(users, "%s\t%s", userfirst->username, userfirst->password);
+        fprintf(users, "%s\n%s\n", userfirst->username, userfirst->password);
         fflush(users);
     }else{
         if(fgets(content, 200, users) == NULL){
             fclose(users);
             users = fopen(userfile, "w");
             setbuf(users,NULL);
-            fprintf(users, "%s\t%s", userfirst->username, userfirst->password);
+            fprintf(users, "%s\n%s\n", userfirst->username, userfirst->password);
             fflush(users);
             fclose(users);
             return;
         }else{
-            User * q = (User*)malloc(sizeof q);
+            User * q;
             q = userfirst;
-            q->next = NULL;
             do{
                 while (content[i] != '\n'&& content[i] != '\0') i++;
                 content[i] = '\0';
-                strcpy(q->username, strtok(content, s));
-                strcpy(q->password, strtok(NULL, s));
-                User * h= (User*)malloc(sizeof h);
-                h->next = q->next;
+                strcpy(q->username, content);
+                fgets(content, 200, users);
+                strcpy(q->password, content);
+                User *h = (User*) malloc(sizeof h);
                 q->next = h;
-                q = h;
+                h->next = NULL;
+                q = q->next;
+                h = h->next;
                 free(h);
             }while(fgets(content, 200, users) != NULL);
+            q = NULL;
         }
     }
     fclose(users);
@@ -104,58 +110,45 @@ void displayBooks(char *bookfile){
 void registeruser(char *userfile){
     int i = 1;
     FILE *usersfp;
-    usersfp = fopen(userfile, "w");
+    usersfp = fopen(userfile, "r");
     char username[100];
     char password[100];
+    char truename[100];
     printf("\nPlease enter a username: ");
     scanf("%s",username);
-    printf("\nPlease enter a password: ");
+    getchar();
+    printf("Please enter a password: ");
     scanf("%s",password);
-    User * regist = (User*)malloc(sizeof regist);
+    User * regist;
     regist = userfirst;
     while(regist != NULL){
-        fprintf(usersfp,"%s\t%s\n",regist->username,regist->password);
-        if(strcmp(regist->username, username) == 0){
+        int j = 0;
+        while (regist->username[j] != '\n') j++;
+        strcpy(truename, regist->username);
+        truename[j] = '\0';
+        if(strcmp(truename, username) == 0){
             i = 0;
-            printf("Sorry, registration unsuccessful, the username you entered already exists");
+            printf("\nSorry, registration unsuccessful, the username you entered already exists\n");
+            fclose(usersfp);
+            mainMenu();
         }
         regist = regist->next;
     }
-    if(i){
-        strcpy(regist->username, username);
-        strcpy(regist->password, password);
-        printf("Registered library account successfully!");
+    regist = (User *)malloc(sizeof regist);
+    strcpy(regist->username, username);
+    strcpy(regist->password, password);
+    regist->next = NULL;
+    fclose(usersfp);
+    fopen(userfile, "w");
+    regist = userfirst;
+    while(regist != NULL) {
+        fprintf(usersfp, "%s\n%s\n", regist->username, regist->password);
+        regist = regist->next;
     }
+    printf("Registered library account successfully!");
     free(regist);
     fclose(usersfp);
-}
-
-int mainMenu(){
-    int option;
-    loaduserlist(userfilename);
-    printf("Please choose an option:\n1) Register an accoun\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:\n");
-    while(1){
-        if(scanf("%d",&option) == 1){
-            if(option >=1 && option <= 5) break;
-        }
-        printf("Sorry, the option you entered was invalid, please try again.\n");
-        printf("Please choose an option:\n1) Register an accoun\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:\n");
-        fflush(stdin);
-    }
-    switch(option){
-        case 1:
-            registeruser(userfilename);
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            displayBooks(bookfilename);
-            break;
-        case 5:
-            break;
-    }
+    mainMenu();
 }
 
 void searchbook(char *user){
@@ -242,13 +235,10 @@ void login_librarian(void){
         p.next = NULL;
         printf("Enter the title of the book you wish to add: ");
         scanf("%s", p.title);
-        getchar();
         printf("Enter the author of the book you wish to add:");
         scanf("%s", p.authors);
-        getchar();
         printf("Enter the year that the book you wish to add was released: ");
         scanf("%d", p.year);
-        getchar();
         printf("Enter the number of copies of the book that you wish to add: ");
         scanf("%d", p.copies);
         if (add_book(p)) {
@@ -305,24 +295,69 @@ void login_user(char *name){
     login_user(name);
 }
 
-void login(User *user){
-    char username[100];
-    char password[100];
+void login(void){
+    char name[100];
+    char pass[100];
+    char truename[100];
+    char truepass[100];
+    int i = 0;
+    int j = 0;
     printf("\nPlease enter a username: ");
-    scanf("%s",username);
-    printf("\nPlease enter a password: ");
-    scanf("%s",password);
-    User * users = (User*)malloc(sizeof users);
-    users = userfirst;
-    if(strcmp(username, "librarian") == 0 && strcmp(password, "librarian") == 0){
-        login_librarian();
-    }else{
-        while(users != NULL){
-            if(strcmp(users->username, username) == 0 && strcmp(users->password, password) == 0){
-                login_user(users->username);
-            }
-            users = users->next;
+    scanf("%s",name);
+    printf("Please enter a password: ");
+    scanf("%s",pass);
+    User *p;
+    p = userfirst;
+    for(i = 0; p->username[i]!='\n';i++);
+    for(j = 0; p->password[j]!='\n';j++);
+    strcpy(truename, p->username);
+    strcpy(truepass, p->password);
+    truename[i] = '\0';
+    truepass[j] = '\0';
+    if(strcmp(truename,name) == 0){
+        if(strcmp(truepass,pass) == 0){
+            login_librarian();
         }
+        printf("\nThe entered password is incorrect!");
+        mainMenu();
     }
-    free(users);
+    p = p->next;
+    while(p != NULL){
+        for(i = 0; p->username[i]!='\n';i++);
+        for(j = 0; p->password[j]!='\n';j++);
+        strcpy(truename, p->username);
+        strcpy(truepass, p->password);
+        truename[i] = '\0';
+        truepass[j] = '\0';
+        if(strcmp(p->username,name) == 0){
+            if(strcmp(p->password,pass) == 0){
+                login_user(name);
+            }
+            printf("\nThe entered password is incorrect!");
+            mainMenu();
+        }
+        p = p->next;
+    }
+    printf("The user does not exist");
+    mainMenu();
+}
+
+void mainMenu(void) {
+    int option;
+    loaduserlist(userfilename);
+    printf("\nPlease choose an option:\n1) Register an accoun\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:");
+    while(1){
+        if (scanf("%d", &option) == 1)if (option >= 1 && option <= 5) break;
+        printf("\nSorry, the option you entered was invalid, please try again.\n");
+        printf("\nPlease choose an option:\n1) Register an accoun\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:");
+        fflush(stdin);
+    }
+    if(option == 1) {
+        registeruser(userfilename);
+    }else if(option == 2) {
+        login();
+    }else if(option == 3);
+    else if (option == 4){
+        displayBooks(bookfilename);
+    }else if(option == 5);
 }
