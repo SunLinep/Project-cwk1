@@ -1,5 +1,4 @@
-
-#ifndef BOOK_MANAGEMENT_GUARD__H 
+#ifndef BOOK_MANAGEMENT_GUARD__H
 #define BOOK_MANAGEMENT_GUARD__H
 
 #include <stdio.h>
