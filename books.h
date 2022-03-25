@@ -3,7 +3,7 @@
 #ifndef MAIN_C_BOOKS_H
 #define MAIN_C_BOOKS_H
 
-int displayall(Book * bookfirst);
+void displayall(void);
 
 int search(void);
 
