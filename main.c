@@ -23,6 +23,8 @@ int mainmenu(user *userfirst){
     FILE *fp;
     user* user2=(user*) malloc(sizeof user2);
     int option, i;
+fp = fopen("book.txt", "r");
+            load_books(fp);
     if((fp = fopen("user.txt", "r")) ==NULL){
         fp = fopen("user.txt", "w");
         fprintf(fp,"librarian\nlibrarian\n");
@@ -99,8 +101,6 @@ int mainmenu(user *userfirst){
                     fclose(fp);
                 }
             }
-            fp = fopen("book.txt", "r");
-            load_books(fp);
             while(librarianmenu() == 1);
             return 1;
         }else if(i == 3) {
@@ -108,16 +108,15 @@ int mainmenu(user *userfirst){
             return 1;
         }
         else if(i == 2){
-fp = fopen("book.txt", "r");
-            load_books(fp);
-            while(usermenu(name,userfirst) == 1);
+	int k;
+            while(1){
+	k = usermenu(name,userfirst);
+if(k != 1) break; 
+}
             return 1;
         }
     }
     else if(option == 3){
-        fp = fopen("book.txt", "r");
-        load_books(fp);
-        fclose(fp);
         int h;
         while(1){
             h = search();
@@ -130,9 +129,6 @@ fp = fopen("book.txt", "r");
         return 1;
     }
     else if (option == 4){
-        fp = fopen("book.txt","r");
-        load_books(fp);
-        fclose(fp);
         displayall();
         return 1;
     }
@@ -271,32 +267,133 @@ int usermenu(char* name, user* user1){
         }
     }while(1);
     if(option == 1){
-        printf("Enter the ID number of book you wish to borrow: ");
-        int a, i = 1;
-        scanf("%d",&a);
-        Book *h = (Book*) malloc(sizeof h);
+        FILE *fp;
+        user *p = user1;
         Book *q = bookfirst;
-        while(i != a){
+        int a, num = 0,  b = 1, k;
+        while (p){
+            if(strcmp(p->username, name) == 0) break;
+            p = p->next;
+        }
+        while(p->borrowed[num] != -1) num++;
+        while(q){
+            b++;
             q = q->next;
-            i++;
         }
-        h->title = (char*) malloc(sizeof q->title);
-        h->authors = (char *) malloc(sizeof q->authors);
-	strcpy(h->title, q->title);
-	strcpy(h->authors, q->authors);
-        a = borrow(name, user1, h);
-        if(a == 1) {
-            printf("There is no such book in the library\n");
-        }else if(a == 2){
-            printf("You have borrowed the book\n");
-        }else if(a == 3){
+        printf("Enter the ID number of book you wish to borrow: ");
+        scanf("%d",&a);
+	for(k = 0; k < 4; k++){
+		if(p->borrowed[k] == a){
+			printf("You have borrowed the book\n");
+			return 1;
+		}
+	}
+        if(a>b || a<=0) {
+            printf("Sorry, the option you entered was invalid\n");
+            return 1;
+        }
+        if(num == 4) {
+            printf("You have borrowed four books, you can't borrow any more\n");
+            return 1;
+        }
+        q = bookfirst;
+        b = a;
+        while(b > 1){
+            q = q->next;
+            b--;
+        }
+        if(q->copies == 0){
             printf("This book has been checked out\n");
-        }else if(a == 0){
-            printf("You have successfully borrowed the book!\n");
+            return 1;
         }
+        b = 0;
+        while (p->borrowed[b] != -1) b++;
+        p->borrowed[b] = a;
+        q = bookfirst;
+        b = 1;
+        while(b < a){
+            q = q->next;
+            b++;
+        }
+        q->copies--;
+        fp = fopen("borrow.txt", "w");
+p = user1;
+        for(num = 0; p; p = p->next, num = 0){
+            while(p->borrowed[num] != -1) num++;
+            if(num == 0) continue;
+            fprintf(fp,"%s\n%d\n",p->username,num);
+            b = 0;
+            while(p->borrowed[b] != -1 && b < num){
+                fprintf(fp,"%d\n",p->borrowed[b]);
+                b++;
+            }
+        }
+        fclose(fp);
+        fp = fopen("book.txt", "w");
+        q = bookfirst;
+        while(q){
+            fprintf(fp,"%s\n%s\n%d\n%d\n",q->title,q->authors,q->year,q->copies);
+            q = q->next;
+        }
+        fclose(fp);
         return  1;
     }
-    else if(option == 2);
+    else if(option == 2){
+        user *p = user1;
+        Book *q = bookfirst;
+        int a,num = 0, b = 0;
+        while (p){
+            if(strcmp(p->username, name) == 0) break;
+            p = p->next;
+        }
+        while(p->borrowed[num] != -1) num++;
+        printf("Enter the ID number of book you wish to return: ");
+        scanf("%d",&a);
+        while(p->borrowed[b] != a){
+            b++;
+            if(b > 4) break;
+        }
+        if(b > 4) {
+            printf("You haven't borrowed this book\n");
+            return 1;
+        }
+        num--;
+        p->borrowed[b] = -1;
+        b = 0;
+        while(b < 3){
+            if(p->borrowed[b] == -1){
+                p->borrowed[b] = p->borrowed[b+1];
+			p->borrowed[b+1] =-1;
+            }
+            b++;
+        }
+        b = 1;
+        q = bookfirst;
+        while(b < a){
+            q = q->next;
+            b++;
+        }
+        q->copies++;
+        fp = fopen("borrow.txt", "w");
+        for(p = user1, num = 0; p; p = p->next, num = 0){
+            while(p->borrowed[num] != -1) num++;
+            if(num == 0) continue;
+            fprintf(fp,"%s\n%d\n",p->username,num);
+            b = 0;
+            while(p->borrowed[b] != -1 && b < num){
+                fprintf(fp,"%d\n",p->borrowed[b]);
+                b++;
+            }
+        }
+        fclose(fp);
+        fp = fopen("book.txt", "w");
+        q = bookfirst;
+        while(q){
+            fprintf(fp,"%s\n%s\n%d\n%d\n",q->title,q->authors,q->year,q->copies);
+            q = q->next;
+        }
+        fclose(fp);
+    }
     else if(option == 3){
         fp = fopen("book.txt", "r");
         load_books(fp);

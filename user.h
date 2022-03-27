@@ -8,9 +8,15 @@ extern Book *bookfirst;
 typedef struct User{
     char *username;
     char *password;
-    struct _BookList *borrowed;
+    int *borrowed;
     struct User *next;
 }user;
+
+typedef struct Borrow{
+	char *username;
+	int num;
+	int borrowed[4];
+}borrow;
 
 user *loaduser(user * user1, FILE* fp);
 
@@ -18,6 +24,8 @@ user *regist(user * user1);
 
 int login(user* user1, char*name, char*pass);
 
-int borrow(char* name, user* user1, Book*book);
+//int borrow(char* name, user* user1, Book*book);
+
+//int returnbook(char* name, user* user1, Book*book);
 
 #endif
