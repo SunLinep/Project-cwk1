@@ -86,7 +86,7 @@ user *regist(user * user1){
     printf("\nPlease enter a name: ");
     scanf("%s",name);
     getchar();
-    printf("\nPlease enter a username: ");
+    printf("Please enter a username: ");
     scanf("%s",username);
     getchar();
     printf("Please enter a password: ");

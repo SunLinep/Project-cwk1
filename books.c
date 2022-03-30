@@ -7,13 +7,64 @@
 
 void displayall(){
     Book *p;
-char c;
-int i, j = 1;
+    int i, k, idlen = 2, titlelen = 5, authorlen = 7, j = 1;
     p = bookfirst;
     while(p){
-printf("%d\t%s\t%s\t%d\t%d\n",j,p->title,p->authors,p->year,p->copies);
+        k = 0;
+        i = j;
+        while(i > 0){
+            i /= 10;
+            k++;
+        }
+        if(k > idlen) idlen = k;
+        if(titlelen < strlen(p->title)) titlelen = strlen(p->title);
+        if(authorlen < strlen(p->title)) authorlen = strlen(p->authors);
         p = p->next;
-j++;
+        j++;
+    }
+    j = 1;
+    p = bookfirst;
+    printf("%-*s    %-*s    %-*s    Year    Copies\n",idlen, "Id", titlelen, "Title", authorlen, "Authors");
+    while(p){
+        printf("%-*d    %-*s    %-*s    %-4d    %d\n",idlen, j, titlelen, p->title, authorlen, p->authors,p->year,p->copies);
+        p = p->next;
+        j++;
+    }
+}
+
+void displayborrowed(user* user1){
+	Book *p;
+	user *q = user1;
+    int h = 0, i, k, idlen = 2, titlelen = 5, authorlen = 7, j = 1;
+    p = bookfirst;
+    while(p){
+    	if(q->borrowed[h] == j){
+        k = 0;
+        i = j;
+        while(i > 0){
+            i /= 10;
+            k++;
+        }
+        if(k > idlen) idlen = k;
+        if(titlelen < strlen(p->title)) titlelen = strlen(p->title);
+        if(authorlen < strlen(p->title)) authorlen = strlen(p->authors);
+        h++;
+        }
+        p = p->next;
+        j++;
+    }
+    if(h == 0) return;
+    h = 0;
+    j = 1;
+    p = bookfirst;
+    printf("%-*s    %-*s    %-*s    Year    Copies\n",idlen, "Id", titlelen, "Title", authorlen, "Authors");
+    while(p){
+    	if(q->borrowed[h] == j){
+        printf("%-*d    %-*s    %-*s    %-4d    %d\n",idlen, j, titlelen, p->title, authorlen, p->authors,p->year,p->copies);
+        h++;
+        }
+        p = p->next;
+        j++;
     }
 }
 

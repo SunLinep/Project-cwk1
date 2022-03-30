@@ -12,12 +12,6 @@ typedef struct User{
     struct User *next;
 }user;
 
-typedef struct Borrow{
-	char *username;
-	int num;
-	int borrowed[4];
-}borrow;
-
 user *loaduser(user * user1, FILE* fp);
 
 user *regist(user * user1);

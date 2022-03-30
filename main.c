@@ -7,7 +7,7 @@
 
 int mainmenu(user *userfirst);
 
-int librarianmenu(void);
+int librarianmenu(user* userfirst);
 
 int usermenu(char* name, user* user1);
 
@@ -44,8 +44,10 @@ fp = fopen("book.txt", "r");
     }
     printf("\nPlease choose an option:\n1) Register an account\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:");
     do{
+    	int j = 0;
         i = scanf("%d", &option);
-        if(i != 1 && option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
+        while(getchar() != '\n') j++;
+        if(i != 1 && option != 1 && option != 2 && option != 3 && option != 4 && option != 5 || j > 0) {
             printf("\nSorry, the option you entered was invalid, please try again.\n");
             printf("\nPlease choose an option:\n1) Register an account\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:");
             fflush(stdin);
@@ -85,7 +87,7 @@ fp = fopen("book.txt", "r");
         getchar();
         i = login(userfirst, name, pass);
         if(i == 0){
-            printf("\nThe entered username is incorrect\n!");
+            printf("\nThe entered username is incorrect!\n");
             return 1;
         }else if(i == 1){
             if((fp = fopen("book.txt", "r")) == NULL){
@@ -101,7 +103,7 @@ fp = fopen("book.txt", "r");
                     fclose(fp);
                 }
             }
-            while(librarianmenu() == 1);
+            while(librarianmenu(userfirst) == 1);
             return 1;
         }else if(i == 3) {
             printf("\nThe entered password is incorrect!\n");
@@ -137,14 +139,15 @@ if(k != 1) break;
     }
 }
 
-int librarianmenu(void){
+int librarianmenu(user* userfirst){
 FILE*fp;
     int option, i;
     printf("\n(logged in as: librarian)\nPlease choose an option:\n1) Add a book\n2) Remove a book\n3) Search for books\n4) Display all books\n5) log out\n Option:");
     do{
+    	int j = 0;
         i = scanf("%d", &option);
-        getchar();
-        if(i != 1 && option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
+        while(getchar() != '\n') j++;
+        if(i != 1 && option != 1 && option != 2 && option != 3 && option != 4 && option != 5 || j > 0) {
             printf("\nSorry, the option you entered was invalid, please try again.\n");
             printf("\n(logged in as: librarian)\nPlease choose an option:\n1) Add a book\n2) Remove a book\n3) Search for books\n4) Display all books\n5) log out\n Option:");
             fflush(stdin);
@@ -160,7 +163,7 @@ FILE*fp;
         }
     }while(1);
     if(option == 1){
-        char content[100];
+        char content[100], j, k;
         Book addbook;
         printf("\nEnter book's title: ");
         gets(content);
@@ -172,6 +175,11 @@ FILE*fp;
         strcpy(addbook.authors, content);
         printf("Enter book's year: ");
         scanf("%d",&i);
+        while(i > 2022 || i <= 0){
+        	printf("Please enter the correct year: ");
+        	fflush(stdin);
+        	scanf("%d",&i);
+        }
         addbook.year = i;
         printf("Enter book's copies: ");
         scanf("%d",&i);
@@ -185,12 +193,25 @@ FILE*fp;
         }
     }
     else if(option == 2){
-        int a, h = 1;
+        int a, h = 1, k;
         char content[100];
         Book *q = bookfirst;
         Book removebook;
+        displayall();
         printf("\nEnter book's id: ");
         scanf("%d",&a);
+        user *p = userfirst;
+        while(p){
+        	k = 0;
+        	while(k < 4) {
+        		if(p->borrowed[k] == a){
+        			printf("Some copies of the book is on loan and cannot be removed\n");
+        			return 1;
+        		}
+        		k++;
+        	}
+        	p = p->next;
+        }
         while(q){
             if(h == a){
                 removebook.title = (char *) malloc(sizeof q->title);
@@ -209,13 +230,13 @@ FILE*fp;
             q = bookfirst;
             fp = fopen("book.txt","w");
             while(q){
-                printf("%s\n%s\n%d\n%d\n",q->title,q->authors,q->year,q->copies);
                 fprintf(fp,"%s\n%s\n%d\n%d\n",q->title,q->authors,q->year,q->copies);
                 q = q->next;
             }
             fclose(fp);
             printf("The book has been successfully deleted");
         }
+        return 1;
     }
     else if(option == 3){
         fp = fopen("book.txt", "r");
@@ -249,9 +270,10 @@ int usermenu(char* name, user* user1){
     int option, i;
     printf("\n(logged in as: %s)\nPlease choose an option:\n1) Borrow a book\n2) Return a book\n3) Search for books\n4) Display all books\n5) log out\n Option:",name);
     do{
+    	int j = 0;
         i = scanf("%d", &option);
-        getchar();
-        if(i != 1 && option != 1 && option != 2 && option != 3 && option != 4 && option != 5) {
+        while(getchar() != '\n') j++;
+        if(i != 1 && option != 1 && option != 2 && option != 3 && option != 4 && option != 5 || j>0) {
             printf("\nSorry, the option you entered was invalid, please try again.\n");
             printf("\n(logged in as: %s)\nPlease choose an option:\n1) Borrow a book\n2) Return a book\n3) Search for books\n4) Display all books\n5) log out\n Option:",name);
             fflush(stdin);
@@ -275,6 +297,7 @@ int usermenu(char* name, user* user1){
             if(strcmp(p->username, name) == 0) break;
             p = p->next;
         }
+	displayborrowed(p);
         while(p->borrowed[num] != -1) num++;
         while(q){
             b++;
@@ -309,6 +332,16 @@ int usermenu(char* name, user* user1){
         b = 0;
         while (p->borrowed[b] != -1) b++;
         p->borrowed[b] = a;
+b= 3;
+a = 0;
+	while(b >= 0){
+	if(p->borrowed[b] < p->borrowed[b-1]){
+	a = p->borrowed[b-1];
+	p->borrowed[b-1] = p->borrowed[b];
+	p->borrowed[b] = a;
+}
+b--;
+}
         q = bookfirst;
         b = 1;
         while(b < a){
@@ -336,6 +369,7 @@ p = user1;
             q = q->next;
         }
         fclose(fp);
+        printf("Success comes\n");
         return  1;
     }
     else if(option == 2){
@@ -346,6 +380,7 @@ p = user1;
             if(strcmp(p->username, name) == 0) break;
             p = p->next;
         }
+displayborrowed(p);
         while(p->borrowed[num] != -1) num++;
         printf("Enter the ID number of book you wish to return: ");
         scanf("%d",&a);
@@ -393,6 +428,8 @@ p = user1;
             q = q->next;
         }
         fclose(fp);
+        printf("Return the book success\n");
+        return 1;
     }
     else if(option == 3){
         fp = fopen("book.txt", "r");
