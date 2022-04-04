@@ -292,7 +292,7 @@ int usermenu(char* name, user* user1){
         FILE *fp;
         user *p = user1;
         Book *q = bookfirst;
-        int a, num = 0,  b = 1, k;
+        int a, num = 0,  b = 1, k, h;
         while (p){
             if(strcmp(p->username, name) == 0) break;
             p = p->next;
@@ -333,20 +333,19 @@ int usermenu(char* name, user* user1){
         while (p->borrowed[b] != -1) b++;
         p->borrowed[b] = a;
 b= 3;
-a = 0;
-	while(b >= 0){
-	if(p->borrowed[b] < p->borrowed[b-1]){
-	a = p->borrowed[b-1];
+	while(b > 0){
+	if(p->borrowed[b] < p->borrowed[b-1] && p->borrowed[b]!=-1){
+	h = p->borrowed[b-1];
 	p->borrowed[b-1] = p->borrowed[b];
-	p->borrowed[b] = a;
+	p->borrowed[b] = h;
 }
 b--;
 }
         q = bookfirst;
-        b = 1;
-        while(b < a){
+        b = a;
+        while(b > 1){
             q = q->next;
-            b++;
+            b--;
         }
         q->copies--;
         fp = fopen("borrow.txt", "w");
