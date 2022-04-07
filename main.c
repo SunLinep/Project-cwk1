@@ -212,6 +212,10 @@ int librarianmenu(user* userfirst){
             k++;
             q = q->next;
         }
+if(k == 1){
+	printf("There was only one book left and it could not be deleted\n");
+	return 1;
+}
         a = typeoption(k, "Enter book's id: ");
         p = userfirst;
         while(p){
