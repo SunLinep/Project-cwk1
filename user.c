@@ -17,9 +17,9 @@ user *loaduser(user * user1, FILE* fp){
     rewind(fp);
     char a = fgetc(fp);
     if(a == EOF){
-        user1->username = (char*) malloc(sizeof "librarian");
+        user1->username = (char*) malloc(20);
         strcpy(user1->username,"librarian");
-        user1->password = (char*) malloc(sizeof "librarian");
+        user1->password = (char*) malloc(20);
         strcpy(user1->password, "librarian");
         return NULL;
     }

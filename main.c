@@ -161,7 +161,6 @@ int librarianmenu(user* userfirst){
     FILE*fp;
         fp = fopen(bookfilename, "r");
         load_books(fp);
-        fclose(fp);
     int option, i;
 	option = typeoption(5, "\n(logged in as: librarian)\nPlease choose an option:\n1) Add a book\n2) Remove a book\n3) Search for books\n4) Display all books\n5) log out\n Option:");
     if(option == 1){
@@ -172,7 +171,7 @@ int librarianmenu(user* userfirst){
             fgets(content, 90, stdin);
             removenewline(content);
             if(strlen(content) <= 50 && strlen(content) >= 1) break;
-            else printf("Title is too long, please limit them to 50 characters!\n\nEnter book's title: ");
+            else printf("\nPlease enter correct title: ");
         }
         addbook.title = (char *) malloc(sizeof content);
         strcpy(addbook.title, content);
@@ -181,7 +180,7 @@ int librarianmenu(user* userfirst){
             fgets(content, 90, stdin);
             removenewline(content);
             if(strlen(content) <= 50 && strlen(content) >= 1) break;
-            else printf("Author is too long, please limit them to 50 characters!\n\nEnter book's author:");
+            else printf("\nPlease enter correct authors: ");
         }
         addbook.authors = (char *) malloc(sizeof content);
         strcpy(addbook.authors, content);

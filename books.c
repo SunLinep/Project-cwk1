@@ -33,13 +33,16 @@ void initlibrary(user *userfirst, char *books, char *users, FILE *fp){
         fp = fopen(books, "w");
         store_books(fp);
         fclose(fp);
+fp = fopen(books, "r");
+        load_books(fp);
+        fclose(fp);
         fp = fopen("borrow.txt","w");
         fclose(fp);
         printf("Initialization of the library system is complete!\n");
     }
     if((fp = fopen(users, "r")) ==NULL){
         fp = fopen(users, "w");
-        fprintf(fp,"librarian\nlibrarian\n");
+        fprintf(fp,"librarian\nlibrarian\nlibrarian\n");
         fclose(fp);
 fp = fopen(users, "r");
         userfirst = loaduser(userfirst, fp);
@@ -48,14 +51,13 @@ fp = fopen(users, "r");
         user2 = (user*)malloc(sizeof user2);
         fclose(fp);
         fp = fopen(users, "w");
-        fprintf(fp, "librarian\nlibrarian\n");
+        fprintf(fp, "librarian\nlibrarian\nlibrarian\n");
         fclose(fp);
         fp = fopen(users, "r");
         userfirst = loaduser(userfirst, fp);
-        fclose(fp);
+fclose(fp);
     }else{
         userfirst = loaduser(userfirst, fp);
-        fclose(fp);
     }
 }
 

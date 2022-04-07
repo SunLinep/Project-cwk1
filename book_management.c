@@ -86,7 +86,30 @@ int load_books(FILE *file){
 int add_book(Book book){
     Book *p = bookfirst;
     while (p){
-        if(strcmp(book.title,p->title) == 0 && strcmp(book.authors, p->authors) == 0) return 1;
+        if(strcmp(book.title,p->title) == 0 && strcmp(book.authors, p->authors) == 0) {
+        	if(p->copies == book.copies) return 1;
+        	else if(p->year == book.year){
+        		char a;
+        		char b[1000];
+        		memset(b, '\0', sizeof b);
+        		printf("Please confirm whether to modify copies(enter any key to exit and enter y to confirm)!");
+        		scanf("%c",&a);
+        		fgets(b, 900, stdin);
+        		if(a == 'y' && strlen(b) == 1) {
+        			FILE *fp;
+        			p->copies = book.copies;
+        			fp = fopen(bookfilename,"w");
+        			p = bookfirst;
+        			while(p){
+        				fprintf(fp, "%s\n%s\n%d\n%d\n", p->title, p->authors, p->year, p->copies);
+    					p = p -> next;
+        			}
+    				fclose(fp);
+        			return 0;
+        		}
+        		else return -1;
+        	}
+        }
         p = p->next;
     }
 //    Book *q = (Book *) malloc(sizeof q);
