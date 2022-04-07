@@ -5,6 +5,7 @@
 #include "user.h"
 #include "book_management.h"
 
+//Initialize the library system
 void initlibrary(user *userfirst, char *books, char *users, FILE *fp){
     user* user2 = (user*)malloc(sizeof user2);
     if((fp = fopen(books, "r")) != NULL) load_books(fp);
@@ -61,6 +62,7 @@ fclose(fp);
     }
 }
 
+//Remove the trailing \n and \r
 void removenewline(char *content){
     int i;
     for(i = 0; i < strlen(content); i++){
@@ -71,6 +73,7 @@ void removenewline(char *content){
     }
 }
 
+//Check whether the input is valid
 int checkcontent(char *content){
 	int i;
 	if(strlen(content) > 8 || strlen(content) < 1) return 0;
@@ -80,6 +83,7 @@ int checkcontent(char *content){
 	return 1;
 }
 
+//Menu display and input
 int typeoption(int num, char *choices){
 	int i, j, option;
     printf("%s", choices);
@@ -96,6 +100,7 @@ int typeoption(int num, char *choices){
     }
 }
 
+//display all books
 void displayall(){
     Book *p;
     int i, k, idlen = 2, titlelen = 5, authorlen = 7, j = 1;
@@ -123,6 +128,7 @@ void displayall(){
     }
 }
 
+//display borrowed books
 void displayborrowed(user* user1){
 	Book *p;
 	user *q = user1;
@@ -159,6 +165,7 @@ void displayborrowed(user* user1){
     }
 }
 
+//display searched books
 void displaysearch(BookList books){
 	Book *p, *q;
     int i, k, h = 0, idlen = 2, titlelen = 5, authorlen = 7, j = 1;
@@ -199,6 +206,7 @@ void displaysearch(BookList books){
     }
 }
 
+//search books
 int search(void){
     int option;
     option = typeoption(4, "Please choose an option:\n1) Find books by title\n2) Find books by authors\n3) Find books by year\n4) Return to previous menu\n Option: ");

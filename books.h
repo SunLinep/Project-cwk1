@@ -4,9 +4,9 @@
 #ifndef MAIN_C_BOOKS_H
 #define MAIN_C_BOOKS_H
 
-char *bookfilename;
+char *bookfilename; //book's filename
 
-char *userfilename;
+char *userfilename; //user's filename
 
 void initlibrary(user *userfirst, char *books, char *users, FILE *fp);
 

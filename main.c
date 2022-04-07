@@ -15,6 +15,7 @@ int main(int argc, char** argv){
     char content[265];
     bookfilename = NULL;
     userfilename = NULL;
+    //Detect command line arguments
     memset(content, '\0', sizeof content);
     int i = 1, j = 1, k = 0;
     while(i < argc){
@@ -93,6 +94,7 @@ int main(int argc, char** argv){
     return 0;
 }
 
+//Main menu and related options
 int mainmenu(user *userfirst){
     FILE *fp = NULL;
     user* user2;
@@ -157,6 +159,7 @@ int mainmenu(user *userfirst){
     return 1;
 }
 
+//Administrator menu and related options
 int librarianmenu(user* userfirst){
     FILE*fp;
         fp = fopen(bookfilename, "r");
@@ -290,6 +293,7 @@ if(k == 1){
     return 1;
 }
 
+//user menu and related options
 int usermenu(char* name, user* user1){
     FILE* fp;
     int option;

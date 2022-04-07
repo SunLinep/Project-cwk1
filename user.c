@@ -5,8 +5,9 @@
 #include "book_management.h"
 #include "books.h"
 
-Book *bookfirst;
+Book *bookfirst;//The head node of book
 
+//Loading User Information
 user *loaduser(user * user1, FILE* fp){
     user* q;
     user* h;
@@ -77,6 +78,7 @@ user *loaduser(user * user1, FILE* fp){
     return user1;
 }
 
+//User registration
 user *regist(user * user1){
     FILE *fp;
     user* q;
@@ -135,6 +137,7 @@ user *regist(user * user1){
     return user1;
 }
 
+//The user login
 int login(user* user1, char*name, char*pass){
     user *p;
     p = user1;

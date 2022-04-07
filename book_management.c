@@ -112,13 +112,6 @@ int add_book(Book book){
         }
         p = p->next;
     }
-//    Book *q = (Book *) malloc(sizeof q);
-//    q->title = (char*) malloc(sizeof book.title);
-//    q->authors = (char*) malloc(sizeof book.authors);
-//    strcpy(q->title,book.title);
-//    strcpy(q->authors,book.authors);
-//    q->year = book.year;
-//    q->copies = book.copies;
     FILE *fp;
     fp = fopen(bookfilename,"a");
     fprintf(fp, "%s\n%s\n%d\n%d\n", book.title, book.authors, book.year, book.copies);
@@ -173,7 +166,7 @@ int remove_book(Book book){
 
 BookList find_book_by_title (const char *title){
     Book *p = bookfirst;
-    int i = 0, h = 0;
+    int i = 0;
     BookList j;
     Book* q = (Book *) malloc(sizeof q);
     j.list = q;
@@ -194,7 +187,6 @@ BookList find_book_by_title (const char *title){
     }
     p = bookfirst;
     m = j.list;
-    Book* x = j.list;
     while(1){
         if(!p || !m) break;
         if(strcmp(p->title, title) == 0){
@@ -204,7 +196,6 @@ BookList find_book_by_title (const char *title){
             strcpy(m->authors,p->authors);
             m->year = p->year;
             m->copies = p->copies;
-            x = m;
             m = m->next;
         }
         p = p->next;
@@ -216,7 +207,7 @@ BookList find_book_by_title (const char *title){
 
 BookList find_book_by_author (const char *author){ 
     Book *p = bookfirst;
-    int i = 0, h = 0;
+    int i = 0;
     BookList j;
     Book* q = (Book *) malloc(sizeof q);
     j.list = q;
@@ -237,7 +228,6 @@ BookList find_book_by_author (const char *author){
     }
     p = bookfirst;
     m = j.list;
-    Book* x = j.list;
     while(1){
         if(!p || !m) break;
         if(strcmp(p->authors, author) == 0){
@@ -247,7 +237,6 @@ BookList find_book_by_author (const char *author){
             strcpy(m->authors,p->authors);
             m->year = p->year;
             m->copies = p->copies;
-            x = m;
             m = m->next;
         }
         p = p->next;
@@ -259,7 +248,7 @@ BookList find_book_by_author (const char *author){
 
 BookList find_book_by_year (unsigned int year){
     Book *p = bookfirst;
-    int i = 0, h = 0;
+    int i = 0;
     BookList j;
     Book* q = (Book *) malloc(sizeof q);
     j.list = q;
@@ -280,7 +269,6 @@ BookList find_book_by_year (unsigned int year){
     }
     p = bookfirst;
     m = j.list;
-    Book* x = j.list;
     while(1){
         if(!p || !m) break;
         if(p->year == year){
@@ -290,7 +278,6 @@ BookList find_book_by_year (unsigned int year){
             strcpy(m->authors,p->authors);
             m->year = p->year;
             m->copies = p->copies;
-            x = m;
             m = m->next;
         }
         p = p->next;
