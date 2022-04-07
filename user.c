@@ -129,7 +129,7 @@ user *regist(user * user1){
     strcpy(p->password, password);
     p->next = NULL;
     q->next = p;
-    fp = fopen("user.txt","a");
+    fp = fopen(userfilename,"a");
     fprintf(fp,"%s\n%s\n%s\n",name,p->username,p->password);
     fclose(fp);
     return user1;

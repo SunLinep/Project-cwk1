@@ -11,7 +11,81 @@ int librarianmenu(user* userfirst);
 
 int usermenu(char* name, user* user1);
 
-int main(void){
+int main(int argc, char** argv){
+    char content[265];
+    bookfilename = NULL;
+    userfilename = NULL;
+    memset(content, '\0', sizeof content);
+    int i = 1, j = 1, k = 0;
+    while(i < argc){
+        if(k == 0){
+            if((strlen(argv[i])) > 259) {
+                printf("The maximum word length of the file name is exceeded");
+                break;
+            }
+            strcpy(content, argv[i]);
+            k = 1;
+        }else{
+            if((strlen(content) + strlen(argv[i]) + 2)> 259){
+                printf("The maximum word length of the file name is exceeded");
+                break;
+            }
+            strcat(content, " ");
+            strcat(content, argv[i]);
+        }
+        if(strlen(content) < 4){
+            i++;
+            continue;
+        }
+        if(content[strlen(content) - 1] != 't' || content[strlen(content) - 2] != 'x' || content[strlen(content) - 3] != 't' || content[strlen(content) - 4] != '.'){
+            i++;
+            continue;
+        }else{
+            if(j == 1){
+                bookfilename = (char*) malloc(strlen(content)+1);
+                strcpy(bookfilename, content);
+                j++;
+            }else if(j == 2){
+                userfilename = (char*) malloc(strlen(content)+1);
+                strcpy(userfilename, content);
+                j++;
+            }else if(j == 3){
+                printf("Invalid input has been ignored!\n");
+                break;
+            }
+            memset(content, '\0', sizeof content);
+            k = 0;
+        }
+        i++;
+    }
+    if(!bookfilename){
+        printf("\nPlease enter a valid bookfilename(ending with.txt): ");
+        while(1){
+            fgets(content, 265, stdin);
+            removenewline(content);
+            if(strlen(content) < 4){
+                printf("\nPlease re-enter a valid bookfilename(ending with.txt): ");
+                continue;
+            }else if(content[strlen(content) - 1] == 't' && content[strlen(content) - 2] == 'x' && content[strlen(content) - 3] == 't' && content[strlen(content) - 4] == '.'){
+                bookfilename = (char*) malloc(strlen(content)+1);
+                strcpy(bookfilename, content);
+                break;
+            }else printf("\nPlease re-enter a valid bookfilename(ending with.txt): ");
+        }
+    }
+    if(!userfilename){
+        printf("\nPlease enter a valid filename(ending with.txt): ");
+        while(1){
+            fgets(content, 265, stdin);
+            removenewline(content);
+            if(content[strlen(content) - 1] == 't' && content[strlen(content) - 2] == 'x' && content[strlen(content) - 3] == 't' && content[strlen(content) - 4] == '.'){
+                userfilename = (char*) malloc(strlen(content)+1);
+                strcpy(userfilename, content);
+                break;
+            }
+            else printf("\nPlease re-enter a valid filename(ending with.txt): ");
+        }
+    }
     user *user1 = (user*)malloc(sizeof user1);
     user1->next = NULL;
 	bookfirst = (Book*)malloc(sizeof bookfirst);
@@ -23,12 +97,12 @@ int mainmenu(user *userfirst){
     FILE *fp = NULL;
     user* user2;
     int option, i;
-    initlibrary(userfirst, "book.txt", "user.txt", fp);
+    initlibrary(userfirst, bookfilename, userfilename, fp);
     option = typeoption(5, "\nPlease choose an option:\n1) Register an account\n2) Login\n3) Search for books\n4) Display all books\n5) Quit\n Option:");
     if(option == 1){
         if((user2= regist(userfirst)) == NULL){
             printf("\nSorry, registration unsuccessful, the username you entered already exists\n");
-            fp = fopen("user.txt", "r");
+            fp = fopen(userfilename, "r");
             userfirst = loaduser(userfirst, fp);
             fclose(fp);
         }else{
@@ -49,8 +123,8 @@ int mainmenu(user *userfirst){
         i = login(userfirst, name, pass);
         if(i == 0) printf("\nThe entered username or password is incorrect!\n");
         else if(i == 1){
-            if((fp = fopen("book.txt", "r")) == NULL){
-                fp = fopen("book.txt", "w");
+            if((fp = fopen(bookfilename, "r")) == NULL){
+                fp = fopen(bookfilename, "w");
                 printf("\nLibrary file does not exist, please start creating!\n");
                 store_books(fp);
                 printf("Successfully created\n");
@@ -59,7 +133,7 @@ int mainmenu(user *userfirst){
                 a = fgetc(fp);
                 if(a == EOF){
                     fclose(fp);
-                    fp = fopen("book.txt", "w");
+                    fp = fopen(bookfilename, "w");
                     printf("\nLibrary files are empty, please start creating!\n");
                     store_books(fp);
                     printf("Successfully created\n");
@@ -85,15 +159,17 @@ int mainmenu(user *userfirst){
 
 int librarianmenu(user* userfirst){
     FILE*fp;
-    int option, i, j;
+        fp = fopen(bookfilename, "r");
+        load_books(fp);
+        fclose(fp);
+    int option, i;
 	option = typeoption(5, "\n(logged in as: librarian)\nPlease choose an option:\n1) Add a book\n2) Remove a book\n3) Search for books\n4) Display all books\n5) log out\n Option:");
     if(option == 1){
-        char content[100], j, k;
+        char content[100], j;
         Book addbook;
         printf("\nEnter book's title: ");
         while(1){
             fgets(content, 90, stdin);
-            while(getchar()!='\n');
             removenewline(content);
             if(strlen(content) <= 50 && strlen(content) >= 1) break;
             else printf("Title is too long, please limit them to 50 characters!\n\nEnter book's title: ");
@@ -103,7 +179,6 @@ int librarianmenu(user* userfirst){
         printf("\nEnter book's author: ");
         while(1){
             fgets(content, 90, stdin);
-            while(getchar()!='\n');
             removenewline(content);
             if(strlen(content) <= 50 && strlen(content) >= 1) break;
             else printf("Author is too long, please limit them to 50 characters!\n\nEnter book's author:");
@@ -123,17 +198,19 @@ int librarianmenu(user* userfirst){
         addbook.copies = i;
         i = add_book(addbook);
         if(i == 1) printf("\nSorry, the book already exists\n");
-        else if(i == 0) printf("Add book successfully\n");
+        else if(i == 0) {
+        printf("Add book successfully\n");
+        }
     }
     else if(option == 2){
         int a, h = 1, k = 0;
-        Book *q = bookfirst;
         Book removebook;
         user *p = userfirst;
         displayall();
-        while(p){
+        Book *q = bookfirst;
+        while(q){
             k++;
-            p = p->next;
+            q = q->next;
         }
         a = typeoption(k, "Enter book's id: ");
         p = userfirst;
@@ -148,11 +225,12 @@ int librarianmenu(user* userfirst){
         	}
         	p = p->next;
         }
+	q = bookfirst;
         while(1){
             if(h == a){
-                removebook.title = (char *) malloc(sizeof q->title);
+                removebook.title = (char *) malloc(200);
+                removebook.authors = (char *) malloc(200);
                 strcpy(removebook.title, q->title);
-                removebook.authors = (char *) malloc(sizeof q->authors);
                 strcpy(removebook.authors, q->authors);
                 break;
             }
@@ -163,7 +241,7 @@ int librarianmenu(user* userfirst){
         if(i==0) printf("\nSorry, this book doesn't exist\n");
         else{
             q = bookfirst;
-            fp = fopen("book.txt","w");
+            fp = fopen(bookfilename,"w");
             while(q){
                 fprintf(fp,"%s\n%s\n%d\n%d\n",q->title,q->authors,q->year,q->copies);
                 q = q->next;
@@ -211,7 +289,7 @@ int librarianmenu(user* userfirst){
 
 int usermenu(char* name, user* user1){
     FILE* fp;
-    int option, i;
+    int option;
     char menu[200] = "\n(logged in as: ";
     strcat(menu, name);
     strcat(menu, ")\nPlease choose an option:\n1) Borrow a book\n2) Return a book\n3) Search for books\n4) Display all books\n5) log out\n Option:");
@@ -230,8 +308,7 @@ int usermenu(char* name, user* user1){
             b++;
             q = q->next;
         }
-        printf("Enter the ID number of book you wish to borrow: ");
-        scanf("%d",&a);
+        a = typeoption(b, "Enter the ID number of book you wish to borrow: ");
         for(k = 0; k < 4; k++){
             if(p->borrowed[k] == a){
                 printf("You have borrowed the book\n");
@@ -288,7 +365,7 @@ int usermenu(char* name, user* user1){
             }
         }
         fclose(fp);
-        fp = fopen("book.txt", "w");
+        fp = fopen(bookfilename, "w");
         q = bookfirst;
         while(q){
             fprintf(fp,"%s\n%s\n%d\n%d\n",q->title,q->authors,q->year,q->copies);
@@ -296,7 +373,6 @@ int usermenu(char* name, user* user1){
         }
         fclose(fp);
         printf("Success comes\n");
-        return  1;
     }
     else if(option == 2){
         user *p = user1;
@@ -347,7 +423,7 @@ int usermenu(char* name, user* user1){
             }
         }
         fclose(fp);
-        fp = fopen("book.txt", "w");
+        fp = fopen(bookfilename, "w");
         q = bookfirst;
         while(q){
             fprintf(fp,"%s\n%s\n%d\n%d\n",q->title,q->authors,q->year,q->copies);
@@ -355,32 +431,23 @@ int usermenu(char* name, user* user1){
         }
         fclose(fp);
         printf("Return the book success\n");
-        return 1;
     }
     else if(option == 3){
-        fp = fopen("book.txt", "r");
-        load_books(fp);
         int h;
         while(1){
             h = search();
-            if(h == 1){
-                printf("The query is successful\n");
-            }else if(h == 2){
-                printf("There is no book\n");
-            }else break;
+            if(h == 1) printf("The query is successful\n");
+            else if(h == 2) printf("There is no book\n");
+            else break;
         }
-        return 1;
     }
-    else if (option == 4){
-        fp = fopen("book.txt","r");
-        load_books(fp);
-        displayall();
-        return 1;
-    }
+    else if (option == 4) displayall();
     else if(option == 5) {
         printf("\nLogging out...\n");
         return 0;
     }
     return 1;
 }
+
+
 

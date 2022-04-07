@@ -3,28 +3,40 @@
 #include "book_management.h"
 #include <stdlib.h>
 #include "user.h"
+#include "books.h"
 
 int store_books(FILE *file){
-    int i;
+    int i, j;
     char content[100];
     char a;
     while(1){
         memset(content,'\0',sizeof content);
-        printf("\nEnter book's title: ");
-        fgets(content, 90, stdin);
-        getchar();
+        printf("Please enter title: ");
+        while(1){
+            fgets(content, 90, stdin);
+            removenewline(content);
+            if(strlen(content) <= 50 && strlen(content) >= 1) break;
+            else printf("Title is invalid, please limit them to 50 characters!\n\nPlease enter title: ");
+        }
         fprintf(file, "%s\n", content);
-        memset(content,'\0',sizeof content);
-        printf("Enter book's author: ");
-        fgets(content, 90, stdin);
-        getchar();
+        printf("Please enter author: ");
+        while(1){
+            fgets(content, 90, stdin);
+            removenewline(content);
+            if(strlen(content) <= 50 && strlen(content) >= 1) break;
+            else printf("Author is invalid, please limit them to 50 characters!\n\nPlease enter author: ");
+        }
         fprintf(file, "%s\n", content);
-        printf("Enter book's year: ");
-        scanf("%d",&i);
+        i = typeoption(2022, "Please enter year: ");
         fprintf(file, "%d\n", i);
         printf("Enter book's copies: ");
-        scanf("%d",&i);
-        getchar();
+        while(1){
+            j = 0;
+            scanf("%d",&i);
+            while(getchar() != '\n') j++;
+            if(i <= 0 || j > 0) printf("Please enter correct copies (need to be at least 1)!\nEnter book's copies: ");
+            else break;
+        }
         fprintf(file, "%d\n", i);
         printf("Do you want to add another book?(Enter any key to continue and n to end)!\n");
         scanf("%c", &a);
@@ -37,11 +49,10 @@ int load_books(FILE *file){
     Book *p, *h;
     p = bookfirst;
     char content[100];
-    int j = 0, i = 1;
-	while(fgets(content,200, file) != NULL){
-        fgets(content,200, file);
-        fgets(content,200, file);
-        fgets(content,200, file);
+	while(fgets(content,90, file) != NULL){
+        fgets(content,90, file);
+        fgets(content,90, file);
+        fgets(content,90, file);
 		Book * q = (Book*) malloc(sizeof q);
       	p ->next = q;
 		h = p;
@@ -51,18 +62,18 @@ int load_books(FILE *file){
     rewind(file);
     p = bookfirst;
     h = bookfirst;
-    while(fgets(content,200, file) != NULL){
+    while(fgets(content,90, file) != NULL){
         removenewline(content);
         p->title = (char *) malloc(sizeof content);
         strcpy(p->title, content);
-        fgets(content, 200, file);
+        fgets(content, 90, file);
         removenewline(content);
         p->authors = (char*) malloc(sizeof content);
         strcpy(p->authors, content);
-        fgets(content, 200, file);
+        fgets(content, 90, file);
         removenewline(content);
         p->year = atoi(content);
-        fgets(content, 200, file);
+        fgets(content, 90, file);
         removenewline(content);
         p->copies = atoi(content);
         h = p;
@@ -74,24 +85,19 @@ int load_books(FILE *file){
 
 int add_book(Book book){
     Book *p = bookfirst;
-    Book *q = (Book *) malloc(sizeof q);
-    q->title = (char*) malloc(sizeof book.title);
-    q->authors = (char*) malloc(sizeof book.authors);
-    strcpy(q->title,book.title);
-    strcpy(q->authors,book.authors);
-    q->year = book.year;
-    q->copies = book.copies;
-    q->next = NULL;
-    FILE *fp;
     while (p){
         if(strcmp(book.title,p->title) == 0 && strcmp(book.authors, p->authors) == 0) return 1;
-        if(p->next == NULL){
-            p->next = q;
-            break;
-        }
         p = p->next;
     }
-    fp = fopen("book.txt","a");
+//    Book *q = (Book *) malloc(sizeof q);
+//    q->title = (char*) malloc(sizeof book.title);
+//    q->authors = (char*) malloc(sizeof book.authors);
+//    strcpy(q->title,book.title);
+//    strcpy(q->authors,book.authors);
+//    q->year = book.year;
+//    q->copies = book.copies;
+    FILE *fp;
+    fp = fopen(bookfilename,"a");
     fprintf(fp, "%s\n%s\n%d\n%d\n", book.title, book.authors, book.year, book.copies);
     fclose(fp);
     return 0;
@@ -102,9 +108,7 @@ int remove_book(Book book){
     Book *p = bookfirst;
     Book *h, *k, *q;
     while (p){
-        if(strcmp(book.title,p->title) == 0 && strcmp(book.authors, p->authors) == 0) {
-            break;
-        }
+        if(strcmp(book.title,p->title) == 0 && strcmp(book.authors, p->authors) == 0) break;
         p = p->next;
         i++;
     }
@@ -112,7 +116,6 @@ int remove_book(Book book){
     p = bookfirst;
     h = (Book*)malloc(sizeof h);
     k = h;
-    q = h;
     while(p->next){
         q = h;
         h->next = (Book*)malloc(sizeof h->next);
@@ -123,14 +126,6 @@ int remove_book(Book book){
             break;
         }
     }
-//    for(j = 0; j < i; j++){
-//        h = (Book*)malloc(sizeof h);
-//        if(j == i-1){
-//            h->next = NULL;
-//            break;
-//        }
-//        h = h->next;
-//    }
     h = k;
     p = bookfirst;
     while (p){
@@ -139,8 +134,8 @@ int remove_book(Book book){
             j++;
             continue;
         }
-        k->title = (char*) malloc(sizeof p->title);
-        k->authors = (char*) malloc(sizeof p->authors);
+        k->title = (char*) malloc(200);
+        k->authors = (char*) malloc(200);
         strcpy(k->title, p->title);
         strcpy(k->authors, p->authors);
         k->year = p->year;
@@ -281,3 +276,4 @@ BookList find_book_by_year (unsigned int year){
     j.length = i;
     return j;
 }
+

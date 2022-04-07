@@ -33,6 +33,8 @@ void initlibrary(user *userfirst, char *books, char *users, FILE *fp){
         fp = fopen(books, "w");
         store_books(fp);
         fclose(fp);
+        fp = fopen("borrow.txt","w");
+        fclose(fp);
         printf("Initialization of the library system is complete!\n");
     }
     if((fp = fopen(users, "r")) ==NULL){
@@ -40,7 +42,7 @@ void initlibrary(user *userfirst, char *books, char *users, FILE *fp){
         fprintf(fp,"librarian\nlibrarian\n");
         fclose(fp);
     }else if((user2 = loaduser(userfirst, fp)) == NULL) {
-	user2 = (user*)malloc(sizeof user2);
+        user2 = (user*)malloc(sizeof user2);
         fclose(fp);
         fp = fopen(users, "w");
         fprintf(fp, "librarian\nlibrarian\n");
@@ -73,15 +75,6 @@ int checkcontent(char *content){
 	return 1;
 }
 
-int checkbookcontent(char *content){
-    int i;
-    if(strlen(content) > 50 || strlen(content) < 1) return 0;
-    for(i = 0; i < strlen(content); i++){
-        if(content[i] < '0' || (content[i] > '9' && content[i] < 'A') ||(content[i] > 'Z' && content[i] < 'a') || content[i] > 'z') return 0;
-    }
-    return 1;
-}
-
 int typeoption(int num, char *choices){
 	int i, j, option;
     printf("%s", choices);
@@ -111,7 +104,7 @@ void displayall(){
         }
         if(k > idlen) idlen = k;
         if(titlelen < strlen(p->title)) titlelen = strlen(p->title);
-        if(authorlen < strlen(p->title)) authorlen = strlen(p->authors);
+        if(authorlen < strlen(p->authors)) authorlen = strlen(p->authors);
         p = p->next;
         j++;
     }
@@ -202,30 +195,18 @@ void displaysearch(BookList books){
 }
 
 int search(void){
-    int option, i, j;
-    printf("Please choose an option:\n1) Find books by title\n2) Find books by authors\n3) Find books by year\n4) Return to previous menu\n Option: ");
-    do{
-        i = scanf("%d", &option);
-        if(i != 1 && option != 1 && option != 2 && option != 3 && option != 4) {
-            printf("\nSorry, the option you entered was invalid, please try again.\n");
-            printf("Please choose an option:\n1) Find books by title\n2) Find books by authors\n3) Find books by year\n4) Return to previous menu\n Option: ");
-            fflush(stdin);
-            continue;
-        }else {
-            if(option == 1 || option == 2 || option == 3 || option == 4) break;
-            else{
-                printf("\nSorry, the option you entered was invalid, please try again.\n");
-                printf("Please choose an option:\n1) Find books by title\n2) Find books by authors\n3) Find books by year\n4) Return to previous menu\n Option: ");
-                fflush(stdin);
-                continue;
-            }
-        }
-    }while(1);
+    int option;
+    option = typeoption(4, "Please choose an option:\n1) Find books by title\n2) Find books by authors\n3) Find books by year\n4) Return to previous menu\n Option: ");
     printf("\nLoading search menu...\n");
     if(option == 1){
         char title[100];
         printf("Please enter title: ");
-        scanf("%s",title);
+        while(1){
+            fgets(title, 90, stdin);
+            removenewline(title);
+            if(strlen(title) <= 50 && strlen(title) >= 1) break;
+            else printf("Title is invalid, please limit them to 50 characters!\n\nPlease enter title: ");
+        }
         BookList first = find_book_by_title (title);
         if(first.list == NULL) return 2;
         displaysearch(first);
@@ -233,15 +214,19 @@ int search(void){
     else if(option == 2){
         char author[100];
         printf("Please enter author: ");
-        scanf("%s",author);
+        while(1){
+            fgets(author, 90, stdin);
+            removenewline(author);
+            if(strlen(author) <= 50 && strlen(author) >= 1) break;
+            else printf("Author is invalid, please limit them to 50 characters!\n\nPlease enter author: ");
+        }
         BookList first = find_book_by_author(author);
         if(first.list == NULL) return 2;
         displaysearch(first);
     }
     else if(option == 3){
         int year;
-        printf("Please enter year: ");
-        scanf("%d",&year);
+        year = typeoption(2022, "Please enter year: ");
         BookList first = find_book_by_year (year);
         if(first.list == NULL) return 2;
         displaysearch(first);
@@ -251,3 +236,4 @@ int search(void){
     }
     return 1;
 }
+

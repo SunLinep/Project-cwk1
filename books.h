@@ -4,6 +4,10 @@
 #ifndef MAIN_C_BOOKS_H
 #define MAIN_C_BOOKS_H
 
+char *bookfilename;
+
+char *userfilename;
+
 void initlibrary(user *userfirst, char *books, char *users, FILE *fp);
 
 void removenewline(char *content);
