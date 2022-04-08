@@ -39,7 +39,6 @@ for(i = 0; content[i] != '\n' && i < strlen(content); i++);
         fclose(fp);
 fp = fopen(books, "r");
         load_books(fp);
-fclose(fp);
     }
     if((fp = fopen(users, "r")) ==NULL){
         fp = fopen(users, "w");
