@@ -77,7 +77,7 @@ for(i = 0; content[i] != '\n' && i < strlen(content); i++);
         }
     }
     if(!userfilename){
-        printf("\nPlease enter a valid filename(ending with.txt): ");
+        printf("\nPlease enter a valid userfilename(ending with.txt): ");
         while(1){
             fgets(content, 265, stdin);
 for(i = 0; content[i] != '\n' && i < strlen(content); i++);
@@ -88,7 +88,7 @@ for(i = 0; content[i] != '\n' && i < strlen(content); i++);
                 strcpy(userfilename, content);
                 break;
             }
-            else printf("\nPlease re-enter a valid filename(ending with.txt): ");
+            else printf("\nPlease re-enter a valid userfilename(ending with.txt): ");
         }
     }
     user *user1 = (user*)malloc(sizeof user1);

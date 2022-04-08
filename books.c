@@ -7,6 +7,7 @@
 
 //Initialize the library system
 void initlibrary(user *userfirst, char *books, char *users, FILE *fp){
+int i;
     user* user2 = (user*)malloc(sizeof user2);
     if((fp = fopen(books, "r")) != NULL) load_books(fp);
     else {
@@ -38,10 +39,7 @@ for(i = 0; content[i] != '\n' && i < strlen(content); i++);
         fclose(fp);
 fp = fopen(books, "r");
         load_books(fp);
-        fclose(fp);
-        fp = fopen("borrow.txt","w");
-        fclose(fp);
-        printf("Initialization of the library system is complete!\n");
+fclose(fp);
     }
     if((fp = fopen(users, "r")) ==NULL){
         fp = fopen(users, "w");
