@@ -44,6 +44,7 @@ for(i = 0; content[i] != '\n' && i < strlen(content); i++);
         fprintf(file, "%d\n", i);
         printf("Do you want to add another book?(Enter any key to continue and n to end)!\n");
         scanf("%c", &a);
+	if(a != '\n') while(getchar()!='\n');
         if(a=='n') break;
     }
     return 0;
@@ -235,9 +236,9 @@ BookList find_book_by_author (const char *author){
     while(1){
         if(!p || !m) break;
         if(strcmp(p->authors, author) == 0){
-            m->title = (char*)malloc(sizeof p->title);
+            m->title = (char*)malloc(100);
             strcpy(m->title,p->title);
-            m->authors = (char*)malloc(sizeof p->authors);
+            m->authors = (char*)malloc(100);
             strcpy(m->authors,p->authors);
             m->year = p->year;
             m->copies = p->copies;
@@ -276,9 +277,9 @@ BookList find_book_by_year (unsigned int year){
     while(1){
         if(!p || !m) break;
         if(p->year == year){
-            m->title = (char*)malloc(sizeof p->title);
+            m->title = (char*)malloc(100);
             strcpy(m->title,p->title);
-            m->authors = (char*)malloc(sizeof p->authors);
+            m->authors = (char*)malloc(100);
             strcpy(m->authors,p->authors);
             m->year = p->year;
             m->copies = p->copies;

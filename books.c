@@ -143,7 +143,7 @@ void displayborrowed(user* user1){
         }
         if(k > idlen) idlen = k;
         if(titlelen < strlen(p->title)) titlelen = strlen(p->title);
-        if(authorlen < strlen(p->title)) authorlen = strlen(p->authors);
+        if(authorlen < strlen(p->authors)) authorlen = strlen(p->authors);
         h++;
         }
         p = p->next;
@@ -180,7 +180,7 @@ void displaysearch(BookList books){
        		 }
        	if(k > idlen) idlen = k;
         	if(titlelen < strlen(q->title)) titlelen = strlen(q->title);
-        	if(authorlen < strlen(q->title)) authorlen = strlen(q->authors);
+        	if(authorlen < strlen(q->authors)) authorlen = strlen(q->authors);
         	if(h == books.length-1) break;
        	h++;
         	q = q->next;
