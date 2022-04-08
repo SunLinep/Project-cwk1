@@ -80,6 +80,7 @@ user *loaduser(user * user1, FILE* fp){
 
 //User registration
 user *regist(user * user1){
+int i;
     FILE *fp;
     user* q;
     q = user1;
@@ -89,16 +90,20 @@ user *regist(user * user1){
     printf("\nPlease enter a name: ");
     while(1){
         fgets(name, 10, stdin);
+	for(i = 0; name[i] != '\n' && i < strlen(name); i++);
+	if(i == strlen(name)) while(getchar()!='\n');
         removenewline(name);
         if(checkcontent(name) == 0){
             printf("\nThe format is wrong. The length should be four to eight characters and contains no illegal characters!\n");
-            printf("\nPlease enter a corrcet username: ");
+            printf("\nPlease enter a corrcet name: ");
             continue;
         }else break;
     }
     printf("Please enter a username: ");
     while(1){
         fgets(username, 10, stdin);
+for(i = 0; username[i] != '\n' && i < strlen(username); i++);
+	if(i == strlen(username)) while(getchar()!='\n');
         removenewline(username);
         if(checkcontent(username) == 0){
             printf("\nThe format is wrong. The length should be four to eight characters and contains no illegal characters!\n");
@@ -109,6 +114,8 @@ user *regist(user * user1){
     printf("Please enter a password: ");
     while(1){
         fgets(password, 10, stdin);
+for(i = 0; password[i] != '\n' && i < strlen(password); i++);
+	if(i == strlen(password)) while(getchar()!='\n');
         removenewline(password);
         if(checkcontent(password) == 0){
             printf("The format is wrong. The length should be four to eight characters and contains no illegal characters!\n");

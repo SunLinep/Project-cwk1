@@ -14,6 +14,8 @@ int store_books(FILE *file){
         printf("Please enter title: ");
         while(1){
             fgets(content, 90, stdin);
+for(i = 0; content[i] != '\n' && i < strlen(content); i++);
+	if(i == strlen(content)) while(getchar()!='\n');
             removenewline(content);
             if(strlen(content) <= 50 && strlen(content) >= 1) break;
             else printf("Title is invalid, please limit them to 50 characters!\n\nPlease enter title: ");
@@ -22,6 +24,8 @@ int store_books(FILE *file){
         printf("Please enter author: ");
         while(1){
             fgets(content, 90, stdin);
+for(i = 0; content[i] != '\n' && i < strlen(content); i++);
+	if(i == strlen(content)) while(getchar()!='\n');
             removenewline(content);
             if(strlen(content) <= 50 && strlen(content) >= 1) break;
             else printf("Author is invalid, please limit them to 50 characters!\n\nPlease enter author: ");

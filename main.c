@@ -63,6 +63,8 @@ int main(int argc, char** argv){
         printf("\nPlease enter a valid bookfilename(ending with.txt): ");
         while(1){
             fgets(content, 265, stdin);
+for(i = 0; content[i] != '\n' && i < strlen(content); i++);
+	if(i == strlen(content)) while(getchar()!='\n');
             removenewline(content);
             if(strlen(content) < 4){
                 printf("\nPlease re-enter a valid bookfilename(ending with.txt): ");
@@ -78,6 +80,8 @@ int main(int argc, char** argv){
         printf("\nPlease enter a valid filename(ending with.txt): ");
         while(1){
             fgets(content, 265, stdin);
+for(i = 0; content[i] != '\n' && i < strlen(content); i++);
+	if(i == strlen(content)) while(getchar()!='\n');
             removenewline(content);
             if(content[strlen(content) - 1] == 't' && content[strlen(content) - 2] == 'x' && content[strlen(content) - 3] == 't' && content[strlen(content) - 4] == '.'){
                 userfilename = (char*) malloc(strlen(content)+1);
@@ -118,9 +122,13 @@ int mainmenu(user *userfirst){
         char a;
         printf("\nPlease enter a username: ");
         fgets(name, 12, stdin);
+for(i = 0; name[i] != '\n' && i < strlen(name); i++);
+	if(i == strlen(name)) while(getchar()!='\n');
         removenewline(name);
         printf("Please enter a password: ");
         fgets(pass, 12, stdin);
+for(i = 0; pass[i] != '\n' && i < strlen(pass); i++);
+	if(i == strlen(pass)) while(getchar()!='\n');
         removenewline(pass);
         i = login(userfirst, name, pass);
         if(i == 0) printf("\nThe entered username or password is incorrect!\n");
@@ -172,6 +180,8 @@ int librarianmenu(user* userfirst){
         printf("\nEnter book's title: ");
         while(1){
             fgets(content, 90, stdin);
+for(i = 0; content[i] != '\n' && i < strlen(content); i++);
+	if(i == strlen(content)) while(getchar()!='\n');
             removenewline(content);
             if(strlen(content) <= 50 && strlen(content) >= 1) break;
             else printf("\nPlease enter correct title: ");
@@ -181,6 +191,8 @@ int librarianmenu(user* userfirst){
         printf("\nEnter book's author: ");
         while(1){
             fgets(content, 90, stdin);
+for(i = 0; content[i] != '\n' && i < strlen(content); i++);
+	if(i == strlen(content)) while(getchar()!='\n');
             removenewline(content);
             if(strlen(content) <= 50 && strlen(content) >= 1) break;
             else printf("\nPlease enter correct authors: ");

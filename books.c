@@ -15,7 +15,8 @@ void initlibrary(user *userfirst, char *books, char *users, FILE *fp){
         printf("Please enter administrator username: ");
         while(1){
             fgets(content, 10, stdin);
-            while(getchar() != '\n');
+for(i = 0; content[i] != '\n' && i < strlen(content); i++);
+	if(i == strlen(content)) while(getchar()!='\n');
             removenewline(content);
             if(strcmp("librarian", content) != 0){
                 printf("Please enter the correct administrator username: ");
@@ -24,7 +25,8 @@ void initlibrary(user *userfirst, char *books, char *users, FILE *fp){
         printf("Please enter administrator password: ");
         while(1){
             fgets(content, 10, stdin);
-            while(getchar() != '\n');
+for(i = 0; content[i] != '\n' && i < strlen(content); i++);
+	if(i == strlen(content)) while(getchar()!='\n');
             removenewline(content);
             if(strcmp("librarian", content) != 0){
                 printf("Please enter the correct administrator password: ");
