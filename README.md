@@ -1,3 +1,3 @@
 # Project-cwk1
 https://github.com/SunLinep/Project-cwk1
-![log](https://user-images.githubusercontent.com/96744742/162370131-2003c22d-2ae2-406c-8c95-65106ef76343.png)
+![log](https://user-images.githubusercontent.com/96744742/162476402-46fcc918-adcd-4200-97df-8b9f6303bd7c.png)
